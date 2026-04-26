@@ -1,0 +1,64 @@
+name: piki-init
+
+on:
+  workflow_dispatch:
+    inputs:
+      org:
+        description: "GitHub organization name"
+        required: true
+        default: "cmux-aim-netlog"
+      wiki_repo:
+        description: "Single wiki repository name (ex: wiki)"
+        required: true
+        default: "wiki"
+      source_repos:
+        description: "Comma-separated source repository names for trigger install (ex: Test_BE,Test_FE,piki)"
+        required: true
+        default: "Test_BE,Test_FE,piki"
+      wiki_branch:
+        description: "Branch name for wiki repository"
+        required: false
+        default: "main"
+      base_branch:
+        description: "Default branch to write files to"
+        required: false
+        default: "main"
+      force_overwrite:
+        description: "Overwrite existing files"
+        type: boolean
+        required: false
+        default: false
+      dry_run:
+        description: "Validate and print actions without writing to GitHub"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  init-repos:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Initialize piki files in target repositories
+        env:
+          GITHUB_TOKEN: ${{ secrets.PIKI_ADMIN_TOKEN || github.token }}
+          INPUT_ORG: ${{ github.event.inputs.org }}
+          INPUT_WIKI_REPO: ${{ github.event.inputs.wiki_repo }}
+          INPUT_SOURCE_REPOS: ${{ github.event.inputs.source_repos }}
+          INPUT_WIKI_BRANCH: ${{ github.event.inputs.wiki_branch }}
+          INPUT_BASE_BRANCH: ${{ github.event.inputs.base_branch }}
+          INPUT_FORCE_OVERWRITE: ${{ github.event.inputs.force_overwrite }}
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: python scripts/piki_init.py

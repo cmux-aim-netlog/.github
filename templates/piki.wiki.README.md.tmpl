@@ -1,0 +1,18 @@
+# piki Wiki for {{ORG}}
+
+이 저장소(`{{WIKI_REPO}}`)는 조직 단위 단일 위키입니다.
+`{{WIKI_REPO}}` 외의 source repo는 위키 파일을 직접 갖지 않습니다.
+
+## 목적
+- 여러 source repo의 변경을 한 곳에서 컨텍스트로 컴파일
+- 코딩 에이전트가 재발견 비용 없이 의사결정 문맥을 재사용
+
+## Sync
+- source repo의 PR(main 대상) merge 이벤트를 GitHub `repository_dispatch`로 수신
+- 외부 서버 없이 GitHub Actions만으로 동작
+
+## 주요 파일
+- `CLAUDE.md`: 위키 스키마/규칙
+- `index.md`: 카탈로그
+- `log.md`: append-only 변경 로그
+- `meta/*`: 역인덱스/헬스체크

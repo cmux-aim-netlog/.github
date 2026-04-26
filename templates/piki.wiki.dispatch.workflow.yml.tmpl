@@ -1,0 +1,23 @@
+name: piki-repo-dispatch
+
+on:
+  repository_dispatch:
+    types:
+      - piki_source_repo_merged
+
+permissions:
+  contents: read
+
+jobs:
+  receive-merge-event:
+    if: github.event.client_payload.pr_merged == true && github.event.client_payload.base_ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print received payload
+        run: |
+          echo "Received merge event from source repo."
+          echo "org=${{ github.event.client_payload.org }}"
+          echo "repo=${{ github.event.client_payload.repo }}"
+          echo "sha=${{ github.event.client_payload.sha }}"
+          echo "pr_number=${{ github.event.client_payload.pr_number }}"
+          echo "pr_url=${{ github.event.client_payload.pr_url }}"
